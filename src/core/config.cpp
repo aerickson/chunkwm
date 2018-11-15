@@ -183,6 +183,9 @@ HandleCore(chunkwm_delegate *Delegate)
         } else {
             free(PluginFS);
         }
+    } else if (StringEquals(Delegate->Command, "query")) {
+        // TODO: write this
+        // core::query --plugins will list loaded plugins
     } else {
         c_log(C_LOG_LEVEL_WARN, "chunkwm: invalid command '%s::%s'\n", Delegate->Target, Delegate->Command);
     }
