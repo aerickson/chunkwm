@@ -184,8 +184,10 @@ HandleCore(chunkwm_delegate *Delegate)
             free(PluginFS);
         }
     } else if (StringEquals(Delegate->Command, "query")) {
-        // TODO: write this
+        // TODO(aje): write this
         // core::query --plugins will list loaded plugins
+        WriteToSocket("Testing 123.", Delegate->SockFD);
+
     } else {
         c_log(C_LOG_LEVEL_WARN, "chunkwm: invalid command '%s::%s'\n", Delegate->Target, Delegate->Command);
     }
