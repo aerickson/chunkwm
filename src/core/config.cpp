@@ -117,6 +117,22 @@ ChunkwmDaemonDelegate(const char *Message, chunkwm_delegate *Delegate)
     return Success;
 }
 
+internal const char*
+GetLoadedPluginsString()
+{
+    std::string Message;
+    std::map<const char *, loaded_plugin *, string_comparator>::iterator it = LoadedPlugins.begin();
+    while (it != LoadedPlugins.end()) {
+        Message.append(it->first);
+        Message.append(",");
+        it++;
+    }
+    Message.pop_back();
+    Message.append("\n");
+    const char *cMessage = Message.c_str();
+    return cMessage;
+}
+
 internal void
 HandleCore(chunkwm_delegate *Delegate)
 {
@@ -186,21 +202,10 @@ HandleCore(chunkwm_delegate *Delegate)
             free(PluginFS);
         }
     } else if (StringEquals(Delegate->Command, "query")) {
-        // 'core::query --plugins' will list loaded plugins
-        // TODO(aje): do this  properly
-        // TODO(aje): handle --plugins vs just outputting them here
-        std::string Message;
-        std::map<const char *, loaded_plugin *, string_comparator>::iterator it = LoadedPlugins.begin();
-        while(it != LoadedPlugins.end())
-        {
-            Message.append(it->first);
-            Message.append(",");
-            it++;
+        // TODO(aje): use a CommandCallback function like in tiling/config.cpp
+        if (StringEquals(Delegate->Message, "--plugins loaded")) {
+            WriteToSocket(GetLoadedPluginsString(), Delegate->SockFD);
         }
-        Message.pop_back();
-        Message.append("\n");
-        const char * cMessage = Message.c_str();
-        WriteToSocket(cMessage, Delegate->SockFD);
     } else {
         c_log(C_LOG_LEVEL_WARN, "chunkwm: invalid command '%s::%s'\n", Delegate->Target, Delegate->Command);
     }
