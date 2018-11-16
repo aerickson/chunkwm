@@ -116,7 +116,7 @@ ChunkwmDaemonDelegate(const char *Message, chunkwm_delegate *Delegate)
     return Success;
 }
 
-internal const char*
+internal const char *
 GetLoadedPluginsString()
 {
     std::string Message;
