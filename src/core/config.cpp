@@ -186,25 +186,20 @@ HandleCore(chunkwm_delegate *Delegate)
             free(PluginFS);
         }
     } else if (StringEquals(Delegate->Command, "query")) {
-        // TODO(aje): write this
-        // core::query --plugins will list loaded plugins
-
-        // get loaded plugin list
-//        char* temp
+        // 'core::query --plugins' will list loaded plugins
+        // TODO(aje): do this  properly
+        // TODO(aje): handle --plugins vs just outputting them here
         std::string Message;
         std::map<const char *, loaded_plugin *, string_comparator>::iterator it = LoadedPlugins.begin();
         while(it != LoadedPlugins.end())
         {
-//            std::cout<<it->first<<" :: "<<it->second<<std::endl;
             Message.append(it->first);
+            Message.append(",");
             it++;
         }
-//        char* cMessage;
-//        cMessage = Message.c_str();
+        Message.pop_back();
+        Message.append("\n");
         const char * cMessage = Message.c_str();
-
-
-        // display it
         WriteToSocket(cMessage, Delegate->SockFD);
     } else {
         c_log(C_LOG_LEVEL_WARN, "chunkwm: invalid command '%s::%s'\n", Delegate->Target, Delegate->Command);
