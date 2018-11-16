@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 #define internal static
 
@@ -115,6 +116,22 @@ ChunkwmDaemonDelegate(const char *Message, chunkwm_delegate *Delegate)
     return Success;
 }
 
+internal const char*
+GetLoadedPluginsString()
+{
+    std::string Message;
+    std::map<const char *, loaded_plugin *, string_comparator>::iterator it = LoadedPlugins.begin();
+    while (it != LoadedPlugins.end()) {
+        Message.append(it->first);
+        Message.append(",");
+        it++;
+    }
+    Message.pop_back();
+    Message.append("\n");
+    const char *cMessage = Message.c_str();
+    return cMessage;
+}
+
 internal void
 HandleCore(chunkwm_delegate *Delegate)
 {
@@ -182,6 +199,11 @@ HandleCore(chunkwm_delegate *Delegate)
             ConstructEvent(ChunkWM_PluginUnload, PluginFS);
         } else {
             free(PluginFS);
+        }
+    } else if (StringEquals(Delegate->Command, "query")) {
+        // TODO(aje): use a CommandCallback function like in tiling/config.cpp
+        if (StringEquals(Delegate->Message, "--plugins loaded")) {
+            WriteToSocket(GetLoadedPluginsString(), Delegate->SockFD);
         }
     } else {
         c_log(C_LOG_LEVEL_WARN, "chunkwm: invalid command '%s::%s'\n", Delegate->Target, Delegate->Command);
