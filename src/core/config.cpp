@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <string>
+
 #define internal static
 
 internal inline bool
@@ -186,8 +188,21 @@ HandleCore(chunkwm_delegate *Delegate)
     } else if (StringEquals(Delegate->Command, "query")) {
         // TODO(aje): write this
         // core::query --plugins will list loaded plugins
-        WriteToSocket("Testing 123.", Delegate->SockFD);
 
+        // get loaded plugin list
+//        char* temp
+        std::string Message;
+        std::map<const char *, loaded_plugin *, string_comparator>::iterator it = LoadedPlugins.begin();
+        while(it != LoadedPlugins.end())
+        {
+//            std::cout<<it->first<<" :: "<<it->second<<std::endl;
+            Message.append(it->first);
+            it++;
+        }
+        char* cMessage = Message.c_str();
+
+        // display it
+        WriteToSocket(cMessage, Delegate->SockFD);
     } else {
         c_log(C_LOG_LEVEL_WARN, "chunkwm: invalid command '%s::%s'\n", Delegate->Target, Delegate->Command);
     }
