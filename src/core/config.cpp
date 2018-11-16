@@ -199,7 +199,10 @@ HandleCore(chunkwm_delegate *Delegate)
             Message.append(it->first);
             it++;
         }
-        char* cMessage = Message.c_str();
+//        char* cMessage;
+//        cMessage = Message.c_str();
+        const char * cMessage = Message.c_str();
+
 
         // display it
         WriteToSocket(cMessage, Delegate->SockFD);
